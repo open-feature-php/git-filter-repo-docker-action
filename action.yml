@@ -1,10 +1,15 @@
 # action.yml
 name: 'git-filter-repo-push'
-description: 'Runs git-filter-repo and pushes the result to a target using ssh'
+description: 'Runs git-filter-repo and pushes the result to a target repository using a token or ssh'
 inputs:
+    token:
+        description: 'Token for pushing to the target repo over HTTPS, e.g. a GitHub App installation token from actions/create-github-app-token. Takes precedence over privateKey.'
+        required: false
+        default: ""
     privateKey:
-        description: 'Private SSH Key for pushing to the target repo'
-        required: true
+        description: 'Private SSH Key for pushing to the target repo. Used when token is not set.'
+        required: false
+        default: ""
     targetOrg:
         description: 'The github organization (or user) of the target repository'
         required: true
@@ -25,6 +30,7 @@ runs:
   using: 'docker'
   image: 'Dockerfile'
   env:
+    TARGET_TOKEN: ${{ inputs.token }}
     SSH_PRIVATE_KEY: ${{ inputs.privateKey }}
     TARGET_ORG: ${{ inputs.targetOrg }}
     TARGET_REPO: ${{ inputs.targetRepo }}
